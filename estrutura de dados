@@ -200,6 +200,45 @@ if (require.main === module) {
 </body>
 </html>
 
+async function load() {
+  const res = await fetch('/api/tasks');
+  const tasks = await res.json();
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  tasks.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'task';
+    el.innerHTML = `<strong>[${t.priority}] ${t.title}</strong> — ${t.status}
+      <div class="controls">
+        <button onclick="markDone(${t.id})">Concluir</button>
+        <button onclick="removeTask(${t.id})">Remover</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+async function markDone(id) {
+  await fetch(`/api/tasks/${id}`, { method: 'PUT', headers:{'content-type':'application/json'}, body: JSON.stringify({ status: 'done' }) });
+  load();
+}
+
+async function removeTask(id) {
+  await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+  load();
+}
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('title').value;
+  const priority = parseInt(document.getElementById('priority').value || '3', 10);
+  await fetch('/api/tasks', { method: 'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ title, priority }) });
+  document.getElementById('title').value = '';
+  load();
+});
+
+load();
+
+
 
 
 
