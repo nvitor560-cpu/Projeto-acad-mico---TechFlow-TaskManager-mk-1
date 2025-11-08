@@ -316,6 +316,14 @@ jobs:
       - name: Run tests
         run: npm test
 
+npm install
+
+npm install --save-dev jest supertest nodemon
+
+npm run db:setup
+
+npm run dev
+
 
 
 
