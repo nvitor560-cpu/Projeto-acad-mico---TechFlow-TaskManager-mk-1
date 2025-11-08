@@ -238,6 +238,40 @@ document.getElementById('form').addEventListener('submit', async (e) => {
 
 load();
 
+const path = require('path');
+const Database = require('better-sqlite3');
+const fs = require('fs');
+
+const dataDir = path.join(__dirname, '..', 'data');
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+
+const db = new Database(path.join(dataDir, 'tasks.db'));
+
+// create table if not exists
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    status TEXT NOT NULL DEFAULT 'todo',
+    priority INTEGER DEFAULT 3,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`).run();
+
+const insert = db.prepare('INSERT INTO tasks (title, description, status, priority) VALUES (?, ?, ?, ?)');
+const sample = [
+  ['Criar repositório', 'Inicializar repo no GitHub', 'done', 1],
+  ['Configurar CI', 'Workflow GitHub Actions', 'inprogress', 1],
+  ['Implementar CRUD', 'API REST para tarefas', 'inprogress', 2],
+  ['Interface web', 'Página simples com fetch', 'todo', 3],
+  ['Documentação', 'README e docs', 'todo', 2]
+];
+
+for (const s of sample) insert.run(...s);
+console.log('DB inicializada e populada.');
+
+
 
 
 
