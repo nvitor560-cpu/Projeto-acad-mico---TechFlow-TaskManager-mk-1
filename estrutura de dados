@@ -21,3 +21,28 @@ techflow-taskmanager/
 ├─ package.json
 └─ README.md
 
+package.json (cole exatamente)
+{
+  "name": "techflow-taskmanager",
+  "version": "1.0.0",
+  "description": "Sistema simples de gerenciamento de tarefas para trabalho acadêmico",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --runInBand",
+    "db:setup": "node scripts/seed_db.js"
+  },
+  "author": "NOME DO ALUNO",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^8.0.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "supertest": "^6.3.0",
+    "nodemon": "^2.0.22"
+  }
+}
+
