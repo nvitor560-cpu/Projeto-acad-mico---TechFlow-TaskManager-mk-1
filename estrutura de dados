@@ -1,1 +1,23 @@
+techflow-taskmanager/
+├─ src/
+│  ├─ server.js
+│  ├─ db.js
+│  ├─ models/
+│  │  └─ taskModel.js
+│  ├─ routes/
+│  │  └─ tasks.js
+│  └─ public/
+│     ├─ index.html
+│     └─ app.js
+├─ scripts/
+│  └─ seed_db.js
+├─ tests/
+│  └─ task.test.js
+├─ .github/
+│  └─ workflows/
+│     └─ ci.yml
+├─ docs/
+│  └─ teoria.md
+├─ package.json
+└─ README.md
 
