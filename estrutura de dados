@@ -33,7 +33,7 @@ package.json (cole exatamente)
     "test": "jest --runInBand",
     "db:setup": "node scripts/seed_db.js"
   },
-  "author": "NOME DO ALUNO",
+  "author": " Nelson vitor ",
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^8.0.0",
@@ -45,4 +45,31 @@ package.json (cole exatamente)
     "nodemon": "^2.0.22"
   }
 }
+
+const Database = require('better-sqlite3');
+const path = require('path');
+const fs = require('fs');
+
+const dataDir = path.join(__dirname, '..', 'data');
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+
+const dbPath = path.join(dataDir, 'tasks.db');
+const db = new Database(dbPath);
+
+function init() {
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS tasks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT,
+      status TEXT NOT NULL DEFAULT 'todo',
+      priority INTEGER DEFAULT 3,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+}
+
+module.exports = { db, init };
+
+
 
