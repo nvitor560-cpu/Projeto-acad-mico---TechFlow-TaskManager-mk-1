@@ -151,6 +151,30 @@ router.post('/batch/complete', (req, res) => {
 
 module.exports = router;
 
+const express = require('express');
+const path = require('path');
+const bodyParser = require('express').json;
+const { init } = require('./db');
+const tasksRouter = require('./routes/tasks');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+init();
+
+app.use(bodyParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/api/tasks', tasksRouter);
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+} else {
+  module.exports = app;
+}
+
+
 
 
 
