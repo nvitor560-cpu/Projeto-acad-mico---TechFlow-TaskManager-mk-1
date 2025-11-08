@@ -71,5 +71,45 @@ function init() {
 
 module.exports = { db, init };
 
+const { db } = require('../db');
+
+const create = ({ title, description, status = 'todo', priority = 3 }) => {
+  const stmt = db.prepare('INSERT INTO tasks (title, description, status, priority) VALUES (?, ?, ?, ?)');
+  const info = stmt.run(title, description, status, priority);
+  return { id: info.lastInsertRowid, title, description, status, priority };
+};
+
+const list = () => db.prepare('SELECT * FROM tasks ORDER BY priority ASC, created_at DESC').all();
+const getById = (id) => db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+
+const update = (id, { title, description, status, priority }) => {
+  const stmt = db.prepare(`UPDATE tasks
+    SET title = COALESCE(?, title),
+        description = COALESCE(?, description),
+        status = COALESCE(?, status),
+        priority = COALESCE(?, priority)
+    WHERE id = ?`);
+  stmt.run(title, description, status, priority, id);
+  return getById(id);
+};
+
+const remove = (id) => {
+  const stmt = db.prepare('DELETE FROM tasks WHERE id = ?');
+  const info = stmt.run(id);
+  return info.changes > 0;
+};
+
+const batchComplete = (ids = []) => {
+  const stmt = db.prepare('UPDATE tasks SET status = ? WHERE id = ?');
+  const tx = db.transaction((arr) => {
+    for (const id of arr) stmt.run('done', id);
+  });
+  tx(ids);
+  return ids.length;
+};
+
+module.exports = { create, list, getById, update, remove, batchComplete };
+
+
 
 
