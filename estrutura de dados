@@ -110,6 +110,48 @@ const batchComplete = (ids = []) => {
 
 module.exports = { create, list, getById, update, remove, batchComplete };
 
+const express = require('express');
+const router = express.Router();
+const Task = require('../models/taskModel');
+
+router.get('/', (req, res) => {
+  const tasks = Task.list();
+  res.json(tasks);
+});
+
+router.post('/', (req, res) => {
+  const { title, description, priority } = req.body;
+  if (!title) return res.status(400).json({ error: 'title é obrigatório' });
+  const task = Task.create({ title, description, priority });
+  res.status(201).json(task);
+});
+
+router.get('/:id', (req, res) => {
+  const task = Task.getById(req.params.id);
+  if (!task) return res.status(404).json({ error: 'Task não encontrada' });
+  res.json(task);
+});
+
+router.put('/:id', (req, res) => {
+  const task = Task.update(req.params.id, req.body);
+  res.json(task);
+});
+
+router.delete('/:id', (req, res) => {
+  const ok = Task.remove(req.params.id);
+  res.json({ success: ok });
+});
+
+router.post('/batch/complete', (req, res) => {
+  const { ids } = req.body;
+  if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids deve ser array' });
+  const count = Task.batchComplete(ids);
+  res.json({ updated: count });
+});
+
+module.exports = router;
+
+
 
 
 
